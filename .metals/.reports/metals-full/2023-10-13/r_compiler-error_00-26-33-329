@@ -1,3 +1,13 @@
+dotty.tools.dotc.core.TypeError: bad parameter reference K at typer
+the parameter is type K in class Tree but the prefix <noprefix>
+does not define any corresponding arguments.
+idx = 0, args = List()
+occurred in the presentation compiler.
+
+action parameters:
+offset: 1420
+uri: file:///C:/vs%20code/Scala/PA%201/src/main/scala/ass1/Tree.scala
+text:
 package ass1
 
 import scala.collection.View.Empty
@@ -35,8 +45,8 @@ enum Tree[K, V] extends TreeInterface[K, V]:
 
   def flatten: List[(Path[K], V)] = 
     def recur(node: Tree[K, V], path:List[K]): List[(Path[K], V)] = node match
-      case Node(key, children) => children.flatMap(recur(_, path:+key))
-      case Leaf(key, payload) => List((Path(path:+key), payload))
+      case Node(key, children) => children.map(recur(_, path:+key).head)
+      case Leaf(key, payload) => List((Path(path:+@@key), payload))
     recur(this, Nil)
 
   def updated(path: Path[K]): Tree[K, V] = 
@@ -80,3 +90,38 @@ object Tree extends TreeComp:
   def apply[K, V](path: Path[K], payload: V): Tree[K, V] = 
     if path.segs==Nil then throw Tree.IllegalPathException
     Node(path.segs.head, Nil).updated(path, payload)
+
+
+
+error stacktrace:
+dotty.tools.dotc.core.Types$NamedType.argDenot(Types.scala:2329)
+	dotty.tools.dotc.core.Types$NamedType.fromDesignator$1(Types.scala:2243)
+	dotty.tools.dotc.core.Types$NamedType.computeDenot(Types.scala:2261)
+	dotty.tools.dotc.core.Types$NamedType.denot(Types.scala:2216)
+	dotty.tools.dotc.core.Types$NamedType.info(Types.scala:2204)
+	dotty.tools.dotc.core.Types$Type.isRef(Types.scala:189)
+	dotty.tools.dotc.printing.PlainPrinter.toTextRHS$$anonfun$1(PlainPrinter.scala:395)
+	dotty.tools.dotc.printing.MessageLimiter.controlled(MessageLimiter.scala:23)
+	dotty.tools.dotc.printing.PlainPrinter.controlled(PlainPrinter.scala:36)
+	dotty.tools.dotc.printing.PlainPrinter.toTextRHS(PlainPrinter.scala:426)
+	dotty.tools.dotc.printing.PlainPrinter.toText$$anonfun$1(PlainPrinter.scala:146)
+	dotty.tools.dotc.printing.MessageLimiter.controlled(MessageLimiter.scala:23)
+	dotty.tools.dotc.printing.PlainPrinter.controlled(PlainPrinter.scala:36)
+	dotty.tools.dotc.printing.PlainPrinter.toText(PlainPrinter.scala:256)
+	dotty.tools.dotc.printing.RefinedPrinter.toText$$anonfun$1(RefinedPrinter.scala:296)
+	dotty.tools.dotc.printing.MessageLimiter.controlled(MessageLimiter.scala:23)
+	dotty.tools.dotc.printing.PlainPrinter.controlled(PlainPrinter.scala:36)
+	dotty.tools.dotc.printing.RefinedPrinter.toText(RefinedPrinter.scala:298)
+	scala.meta.internal.pc.printer.DotcPrinter$Std.toText(DotcPrinter.scala:96)
+	scala.meta.internal.pc.printer.DotcPrinter$Std.tpe(DotcPrinter.scala:41)
+	scala.meta.internal.pc.printer.MetalsPrinter.tpe(MetalsPrinter.scala:91)
+	scala.meta.internal.pc.printer.MetalsPrinter.paramLabel(MetalsPrinter.scala:376)
+	scala.meta.internal.pc.printer.MetalsPrinter.$anonfun$5(MetalsPrinter.scala:209)
+	scala.collection.immutable.List.flatMap(List.scala:293)
+	scala.meta.internal.pc.printer.MetalsPrinter.label$1$$anonfun$1(MetalsPrinter.scala:212)
+	scala.collection.immutable.List.flatMap(List.scala:293)
+	scala.meta.internal.pc.printer.MetalsPrinter.label$1(MetalsPrinter.scala:217)
+	scala.meta.internal.pc.printer.MetalsPrinter.defaultMethodSignature(MetalsPrinter.scala:220)
+	scala.meta.internal.pc.printer.MetalsPrinter.hoverSymbol(MetalsPrinter.scala:118)
+	scala.meta.internal.pc.HoverProvider$.hover(HoverProvider.scala:121)
+	scala.meta.internal.pc.ScalaPresentationCompiler.hover$$anonfun$1(ScalaPresentationCompiler.scala:325)
